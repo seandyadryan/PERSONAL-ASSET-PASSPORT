@@ -18,7 +18,7 @@ services:
       dockerfile: backend/Passport.Api/Dockerfile
     ports: ["127.0.0.1:8080:8080"]
     environment:
-      ConnectionStrings__Database: Host=postgres;Database=passport;Username=passport;Password=${POSTGRES_PASSWORD}
+   
       Firebase__ProjectId: ${FIREBASE_PROJECT_ID:?Set FIREBASE_PROJECT_ID}
       GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/firebase
     secrets: [firebase]
