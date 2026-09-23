@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: passport
+      POSTGRES_USER: passport
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - passport-db:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U passport"]
+      interval: 5s
+      retries: 10
+  api:
+    build:
+      context: .
+      dockerfile: backend/Passport.Api/Dockerfile
+    ports: ["127.0.0.1:8080:8080"]
+    environment:
+      ConnectionStrings__Database: Host=postgres;Database=passport;Username=passport;Password=${POSTGRES_PASSWORD}
+      Firebase__ProjectId: ${FIREBASE_PROJECT_ID:?Set FIREBASE_PROJECT_ID}
+      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/firebase
+    secrets: [firebase]
+    depends_on:
+      postgres:
+        condition: service_healthy
+secrets:
+  firebase:
+    file: ${GOOGLE_APPLICATION_CREDENTIALS_FILE:?Set credentials file path}
+volumes:
+  passport-db:

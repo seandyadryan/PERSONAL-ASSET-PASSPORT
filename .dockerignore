@@ -1,0 +1,7 @@
+**/bin
+**/obj
+mobile
+.git
+.env
+**/service-account*.json
+android
